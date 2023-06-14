@@ -92,23 +92,23 @@ services:
       resources:
         limits:
           memory: 500m
-
-  hue:
-    image: fjardim/hue
-    hostname: hue
-    container_name: hue
-    dns: 8.8.8.8
-    ports:
-    - "8888:8888"
-    volumes:
-      - ./data/hue/hue-overrides.ini:/usr/share/hue/desktop/conf/z-hue.ini
-    depends_on:
-      - "database"
-    deploy:
-      resources:
-        limits:
-          memory: 500m
-  
+#
+  #hue:
+  #  image: fjardim/hue
+  #  hostname: hue
+  #  container_name: hue
+  #  dns: 8.8.8.8
+  #  ports:
+  #  - "8888:8888"
+  #  volumes:
+  #    - ./data/hue/hue-overrides.ini:/usr/share/hue/desktop/conf/z-hue.ini
+  #  depends_on:
+  #    - "database"
+  #  deploy:
+  #    resources:
+  #      limits:
+  #        memory: 500m
+  #
   database:
     image: fjardim/mysql
     container_name: database
@@ -123,13 +123,14 @@ services:
     volumes:
         - ./data/mysql/data:/var/lib/mysql
         - ./data/init.sql:/data/application/init.sql
+        - ../input:/input
     environment:
         MYSQL_ROOT_USER: root
         MYSQL_ROOT_PASSWORD: secret
         MYSQL_DATABASE: hue
         MYSQL_USER: root
         MYSQL_PASSWORD: secret
-
+#
   zookeeper:
     image: fjardim/zookeeper
     container_name: zookeeper
@@ -143,53 +144,53 @@ services:
         limits:
           memory: 500m
 
-  kafka:
-    image: fjardim/kafka
-    container_name: kafka
-    hostname: kafka
-    ports:
-      - "9092:9092"
-    #volumes:
-    #  - ./data/kafka:/kafka/kafka-logs-kafka
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    deploy:
-      resources:
-        limits:
-          memory: 500m
-
-  presto-coordinator:
-    image: fjardim/prestodb
-    container_name: presto
-    hostname: presto
-    ports:
-      - "8080:8080"
-    depends_on:
-      - hive-server  
-    deploy:
-      resources:
-        limits:
-          memory: 500m
-
-  hbase-master:
-    image: fjardim/hbase-master
-    container_name: hbase-master
-    hostname: hbase-master
-    env_file:
-      - ./data/hbase/hbase-standalone.env
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 zookeeper:2181"
-    ports:
-      - 16010:16010
-    depends_on:
-      - namenode
-    deploy:
-      resources:
-        limits:
-          memory: 500m
+#  kafka:
+#    image: fjardim/kafka
+#    container_name: kafka
+#    hostname: kafka
+#    ports:
+#      - "9092:9092"
+#    #volumes:
+#    #  - ./data/kafka:/kafka/kafka-logs-kafka
+#    depends_on:
+#      - zookeeper
+#    environment:
+#      KAFKA_ADVERTISED_HOST_NAME: kafka
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 500m
+#
+#  presto-coordinator:
+#    image: fjardim/prestodb
+#    container_name: presto
+#    hostname: presto
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - hive-server  
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 500m
+#
+#  hbase-master:
+#    image: fjardim/hbase-master
+#    container_name: hbase-master
+#    hostname: hbase-master
+#    env_file:
+#      - ./data/hbase/hbase-standalone.env
+#    environment:
+#      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 zookeeper:2181"
+#    ports:
+#      - 16010:16010
+#    depends_on:
+#      - namenode
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 500
     
 #  mongo:
 #    image: fjardim/mongo
@@ -224,20 +225,20 @@ services:
 #        limits:
 #          memory: 200m
 # 
-  kafkamanager:
-    image: fjardim/kafkamanager
-    container_name: kafkamanager
-    hostname: kafkamanager
-    environment: 
-      ZK_HOSTS: zookeeper:2181
-    ports:
-      - 9000:9000
-    depends_on:
-      - kafka
-    deploy:
-      resources:
-        limits:
-          memory: 200m
+#  kafkamanager:
+#    image: fjardim/kafkamanager
+#    container_name: kafkamanager
+#    hostname: kafkamanager
+#    environment: 
+#      ZK_HOSTS: zookeeper:2181
+#    ports:
+#      - 9000:9000
+#    depends_on:
+#      - kafka
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 200m
  
 #  metabase:
 #    image: fjardim/metabase
@@ -290,7 +291,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1g
+          memory: 2g
 
 volumes:
   pgdata:
